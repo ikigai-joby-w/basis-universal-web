@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { API_URL } from '../config';
-import { KTX2Viewer } from './KTX2Viewer';
 import { CompressionMode } from '../types';
-import { calculateCompressionPercentage, HDR_MODES, UI_MESSAGES, FILE_TYPE_LABELS } from '../utils';
+import { calculateCompressionPercentage, FILE_TYPE_LABELS, HDR_MODES, UI_MESSAGES } from '../utils';
+import { KTX2Viewer } from './KTX2Viewer';
 
 interface PreviewProps {
   originalFile: File | null;

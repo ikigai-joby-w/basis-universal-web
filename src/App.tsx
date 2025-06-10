@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import './style.css';
+import 'pixi.js/ktx2';
+import { useState } from 'react';
 import {
   CompressionOptions,
   ImageUpload,
   MipmapGeneration,
-  StatusMessage,
   Preview,
+  StatusMessage,
 } from './components';
-import { CompressionMode } from './types';
 import { API_URL } from './config';
-import 'pixi.js/ktx2';
+import './style.css';
+import { CompressionMode } from './types';
 
 function App() {
   const [compressionMode, setCompressionMode] = useState<CompressionMode>('etc1s');

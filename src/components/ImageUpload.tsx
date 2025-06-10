@@ -1,10 +1,10 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ImageUploadProps } from '../types';
 import {
-  validateImageFile,
   getImageDimensions,
   padImageToMultipleOfFour,
   UI_MESSAGES,
+  validateImageFile,
 } from '../utils';
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
