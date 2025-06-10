@@ -1,4 +1,4 @@
-import { MAX_FILE_SIZE, SUPPORTED_FORMATS } from './constants';
+import { MAX_FILE_SIZE, SUPPORTED_FORMATS } from '../constants';
 
 /**
  * Validates a file for image upload

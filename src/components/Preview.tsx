@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { API_URL } from '../config';
+import { FILE_TYPE_LABELS, HDR_MODES, UI_MESSAGES } from '../constants';
 import { CompressionMode } from '../types';
-import { calculateCompressionPercentage, FILE_TYPE_LABELS, HDR_MODES, UI_MESSAGES } from '../utils';
+import { calculateCompressionPercentage } from '../utils/formatUtils';
 import { KTX2Viewer } from './KTX2Viewer';
 
 interface PreviewProps {

@@ -1,11 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
+import { UI_MESSAGES } from '../constants';
 import { ImageUploadProps } from '../types';
-import {
-  getImageDimensions,
-  padImageToMultipleOfFour,
-  UI_MESSAGES,
-  validateImageFile,
-} from '../utils';
+import { getImageDimensions, padImageToMultipleOfFour, validateImageFile } from '../utils';
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);

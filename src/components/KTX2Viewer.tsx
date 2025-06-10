@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import React, { useEffect, useRef, useState } from 'react';
-import { DEFAULT_RENDERER_OPTIONS } from '../utils';
+import { DEFAULT_RENDERER_OPTIONS } from '../constants';
 
 interface KTX2ViewerProps {
   url: string;

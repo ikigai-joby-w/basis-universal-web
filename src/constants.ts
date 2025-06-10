@@ -54,7 +54,7 @@ export const SUPPORTED_FORMATS = ['image/png', 'image/jpeg', 'image/gif'] as con
 /**
  * Maximum file size for uploads (50MB)
  */
-export const MAX_FILE_SIZE = 50 * 1024 * 1024;
+export const MAX_FILE_SIZE = 50 * 1000 * 1000;
 
 /**
  * File type labels for UI display

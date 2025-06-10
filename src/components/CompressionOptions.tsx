@@ -1,6 +1,7 @@
 import React, { memo, useCallback } from 'react';
+import { MODE_DESCRIPTIONS, OPTION_CONSTRAINTS } from '../constants';
 import { CompressionMode, CompressionOptionsProps } from '../types';
-import { MODE_DESCRIPTIONS, OPTION_CONSTRAINTS, validateCompressionOptions } from '../utils';
+import { validateCompressionOptions } from '../utils';
 
 const CompressionOptions: React.FC<CompressionOptionsProps> = ({
   mode,
