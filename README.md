@@ -16,7 +16,7 @@ A web-based tool for compressing image textures using the Basis Universal GPU te
 - Real-time preview of compressed textures
 - File size comparison
 - Drag-and-drop file upload
-- Support for PNG, JPG, JPEG, and GIF formats
+- Support for PNG, JPG, JPEG, GIF, and WebP formats
 - Automatic image dimension validation (multiples of 4)
 
 ## Prerequisites
@@ -28,23 +28,27 @@ A web-based tool for compressing image textures using the Basis Universal GPU te
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone
 cd basis-universal-web
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Install the Basis Universal command-line tool:
+
 ```bash
 # Instructions vary by platform
 # See: https://github.com/BinomialLLC/basis_universal
 ```
 
 4. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -69,9 +73,11 @@ The application will be available at `http://localhost:3000` (frontend) and `htt
 ## API Endpoints
 
 ### POST /compress
+
 Compresses an uploaded image using specified parameters.
 
 Request body (multipart/form-data):
+
 - `image`: Image file
 - `mode`: Compression mode
 - `generateMipmaps`: Boolean
@@ -81,6 +87,7 @@ Request body (multipart/form-data):
   - `lambda` and `level` for HDR modes
 
 Response:
+
 ```json
 {
   "success": true,
@@ -97,17 +104,20 @@ Response:
 ```
 
 ### GET /latest-ktx2
+
 Returns information about the most recently generated KTX2 file.
 
 ## Development
 
 The project is built with:
+
 - React + TypeScript (Frontend)
 - Express.js (Backend)
 - Basis Universal (Texture compression)
 - PixiJS (Texture preview)
 
 Key files:
+
 - `src/App.tsx`: Main application component
 - `src/components/`: React components
 - `src/server.js`: Express backend server

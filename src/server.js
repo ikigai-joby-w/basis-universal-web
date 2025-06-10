@@ -122,8 +122,18 @@ async function compressImage(inputPath, options) {
   const tempInputPath = path.join(DIRS.preview, inputFileName);
 
   try {
-    // Copy input file to preview directory
-    await copyFileAsync(inputPath, tempInputPath);
+    // Convert input to PNG if it's WebP
+    if (path.extname(inputFileName).toLowerCase() === '.webp') {
+      const pngFileName = baseFileName + '.png';
+      const pngPath = path.join(DIRS.preview, pngFileName);
+      await sharp(inputPath).png().toFile(pngPath);
+      await unlinkAsync(inputPath);
+      await copyFileAsync(pngPath, tempInputPath);
+      await unlinkAsync(pngPath);
+    } else {
+      // Copy input file to preview directory
+      await copyFileAsync(inputPath, tempInputPath);
+    }
 
     // Execute compression command
     const command = buildBasisuCommand(inputFileName, options);

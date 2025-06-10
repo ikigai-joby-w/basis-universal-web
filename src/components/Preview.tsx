@@ -117,7 +117,11 @@ export const Preview: React.FC<PreviewProps> = ({
                     height={renderedDimensions.height}
                   />
                 ) : (
-                  <img src={`${API_URL}${file.downloadUrl}`} alt={`Compressed ${file.type}`} />
+                  <img
+                    src={`${API_URL}${file.downloadUrl}`}
+                    alt={`Compressed ${file.type}`}
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                  />
                 )}
               </div>
               <div className="info">

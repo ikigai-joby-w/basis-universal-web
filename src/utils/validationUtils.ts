@@ -5,7 +5,7 @@ import { MAX_FILE_SIZE, SUPPORTED_FORMATS } from '../constants';
  */
 export const validateImageFile = (file: File): string | null => {
   if (!SUPPORTED_FORMATS.includes(file.type as (typeof SUPPORTED_FORMATS)[number])) {
-    return 'Unsupported file format. Please use PNG, JPG, or GIF.';
+    return 'Unsupported file format. Please use PNG, JPG, WebP, or GIF.';
   }
   if (file.size > MAX_FILE_SIZE) {
     return 'File is too large. Maximum size is 50MB.';

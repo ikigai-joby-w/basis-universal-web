@@ -101,7 +101,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/png,image/jpeg,image/gif"
+          accept="image/png,image/jpeg,image/gif,image/webp"
           onChange={handleChange}
           style={{ display: 'none' }}
           aria-label="File input"

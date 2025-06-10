@@ -49,7 +49,7 @@ export const OPTION_CONSTRAINTS = {
 /**
  * Supported file formats for image upload
  */
-export const SUPPORTED_FORMATS = ['image/png', 'image/jpeg', 'image/gif'] as const;
+export const SUPPORTED_FORMATS = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'] as const;
 
 /**
  * Maximum file size for uploads (50MB)
@@ -64,6 +64,7 @@ export const FILE_TYPE_LABELS = {
   png: 'PNG',
   jpeg: 'JPEG',
   gif: 'GIF',
+  webp: 'WebP',
 } as const;
 
 /**
@@ -76,7 +77,7 @@ export const FILE_TYPE_LABELS = {
  */
 export const UI_MESSAGES = {
   dragAndDrop: 'Drag and drop your image here or click to select',
-  supportedFormats: 'Supported formats: PNG, JPG, JPEG, GIF (max 50MB)',
+  supportedFormats: 'Supported formats: PNG, JPG, JPEG, GIF, WebP (max 50MB)',
   hdrPreviewUnavailable: 'HDR preview not available in web browser',
   processingError: 'Failed to process image. Please try another file.',
   dimensionsAdjusted: 'Image dimensions have been adjusted to multiples of 4',
