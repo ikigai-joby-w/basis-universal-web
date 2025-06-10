@@ -64,6 +64,7 @@ function App() {
     setStatus({ message: 'Processing...', type: 'success' });
 
     const formData = new FormData();
+    formData.append('name', selectedImage.name.split('.')[0]);
     formData.append('image', selectedImage);
     formData.append('mode', compressionMode);
     formData.append('generateMipmaps', generateMipmaps.toString());

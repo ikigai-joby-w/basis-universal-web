@@ -100,7 +100,7 @@ export const Preview: React.FC<PreviewProps> = ({
               </div>
               <a
                 href={`${API_URL}${file.downloadUrl}`}
-                download={file.filename}
+                download={originalFile?.name.split('.')[0] + '.' + file.type}
                 className="download-btn"
               >
                 Download {FILE_TYPE_LABELS[file.type as keyof typeof FILE_TYPE_LABELS]}
@@ -126,7 +126,7 @@ export const Preview: React.FC<PreviewProps> = ({
                 </div>
                 <a
                   href={`${API_URL}${file.downloadUrl}`}
-                  download={file.filename}
+                  download={originalFile?.name.split('.')[0] + '.' + file.type}
                   className="download-btn"
                 >
                   Download {FILE_TYPE_LABELS[file.type as keyof typeof FILE_TYPE_LABELS]}

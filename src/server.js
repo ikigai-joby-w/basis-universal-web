@@ -140,10 +140,20 @@ async function compressImage(inputPath, options) {
       .filter(
         file => file.startsWith(baseFileName) && (file.endsWith('.basis') || file.endsWith('.ktx2'))
       )
-      .map(file => ({
-        path: path.join(DIRS.preview, file),
-        type: path.extname(file).substring(1),
-      }));
+      .map(file => {
+        const newPath = path.join(
+          DIRS.preview,
+          `${options.name}.${path.extname(file).substring(1)}`
+        );
+        // Rename the file to match original name
+        if (file !== path.basename(newPath)) {
+          fs.renameSync(path.join(DIRS.preview, file), newPath);
+        }
+        return {
+          path: newPath,
+          type: path.extname(newPath).substring(1),
+        };
+      });
 
     if (compressedFiles.length === 0) {
       throw new Error('No compressed files found');
@@ -241,6 +251,7 @@ app.post('/compress', upload.single('image'), async (req, res) => {
       lambda: req.body.lambda,
       level: req.body.level,
       generateMipmaps: req.body.generateMipmaps,
+      name: req.body.name,
     });
 
     // Get compressed file sizes
