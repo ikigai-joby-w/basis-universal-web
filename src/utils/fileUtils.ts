@@ -1,4 +1,10 @@
 /**
+ * File utility functions
+ * Note: Most file operations are handled directly in components
+ * These utilities are kept for potential future use
+ */
+
+/**
  * Creates a URL for a file object
  */
 export const createObjectURL = (file: File): string => {

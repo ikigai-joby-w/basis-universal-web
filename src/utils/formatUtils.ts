@@ -1,5 +1,10 @@
 /**
+ * Format utility functions for file sizes, memory sizes, and compression calculations
+ */
+
+/**
  * Formats a file size in bytes to a human-readable string
+ * Also used for memory size formatting
  */
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';
@@ -10,11 +15,9 @@ export const formatFileSize = (bytes: number): string => {
 };
 
 /**
- * Formats dimensions into a string
+ * Alias for formatFileSize - used for memory size formatting
  */
-export const formatDimensions = (width: number, height: number): string => {
-  return `${width}x${height}`;
-};
+export const formatMemorySize = formatFileSize;
 
 /**
  * Calculates and formats compression percentage

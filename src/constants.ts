@@ -61,6 +61,7 @@ export const MAX_FILE_SIZE = 50 * 1000 * 1000;
  */
 export const FILE_TYPE_LABELS = {
   ktx2: 'KTX2',
+  basis: 'BASIS',
   png: 'PNG',
   jpeg: 'JPEG',
   gif: 'GIF',

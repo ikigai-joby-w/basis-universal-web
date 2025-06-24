@@ -3,6 +3,8 @@ import { API_URL } from '../config';
 import { FILE_TYPE_LABELS, HDR_MODES, UI_MESSAGES } from '../constants';
 import { CompressionMode } from '../types';
 import { calculateCompressionPercentage } from '../utils/formatUtils';
+import { BasisViewer } from './BasisViewer';
+import { ImageViewer } from './ImageViewer';
 import { KTX2Viewer } from './KTX2Viewer';
 
 interface PreviewProps {
@@ -80,8 +82,30 @@ export const Preview: React.FC<PreviewProps> = ({
       {/* Original Image Preview */}
       <div className="preview-box">
         <h3>Original {FILE_TYPE_LABELS.png}</h3>
-        <div className="preview">
-          {originalPreviewUrl && <img ref={imgRef} src={originalPreviewUrl} alt="Original" />}
+        <div>
+          {originalPreviewUrl && (
+            <>
+              {renderedDimensions ? (
+                <ImageViewer
+                  url={originalPreviewUrl}
+                  width={renderedDimensions?.width || 100}
+                  height={renderedDimensions?.height || 100}
+                />
+              ) : (
+                <div className="preview">
+                  <img
+                    style={{
+                      position: 'absolute',
+                      zIndex: -1,
+                    }}
+                    ref={imgRef}
+                    src={originalPreviewUrl}
+                    alt="Original"
+                  />
+                </div>
+              )}
+            </>
+          )}
         </div>
         <div className="info">
           <div className="size">Size: {originalSize}</div>
@@ -109,20 +133,27 @@ export const Preview: React.FC<PreviewProps> = ({
             </div>
           ) : (
             <>
-              <div className="preview">
-                {file.type === 'ktx2' && renderedDimensions ? (
-                  <KTX2Viewer
-                    url={`${API_URL}${file.downloadUrl}`}
-                    width={renderedDimensions.width}
-                    height={renderedDimensions.height}
-                  />
-                ) : (
-                  <img
-                    src={`${API_URL}${file.downloadUrl}`}
-                    alt={`Compressed ${file.type}`}
-                    style={{ maxWidth: '100%', height: 'auto' }}
-                  />
-                )}
+              <div>
+                {renderedDimensions &&
+                  (file.type === 'ktx2' ? (
+                    <KTX2Viewer
+                      url={file.downloadUrl}
+                      width={renderedDimensions.width}
+                      height={renderedDimensions.height}
+                    />
+                  ) : file.type === 'basis' ? (
+                    <BasisViewer
+                      url={file.downloadUrl}
+                      width={renderedDimensions.width}
+                      height={renderedDimensions.height}
+                    />
+                  ) : (
+                    <ImageViewer
+                      url={file.downloadUrl}
+                      width={renderedDimensions.width}
+                      height={renderedDimensions.height}
+                    />
+                  ))}
               </div>
               <div className="info">
                 <div className="size">Compressed Size: {file.size}</div>

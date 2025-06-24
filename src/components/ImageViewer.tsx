@@ -1,16 +1,15 @@
 import * as PIXI from 'pixi.js';
 import React, { useEffect, useRef, useState } from 'react';
-import 'webgl-memory';
 import { DEFAULT_RENDERER_OPTIONS } from '../constants';
 import { WebGLMemoryInfo } from './WebGLMemoryInfo';
 
-interface KTX2ViewerProps {
+interface ImageViewerProps {
   url: string;
   width: number;
   height: number;
 }
 
-export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) => {
+export const ImageViewer: React.FC<ImageViewerProps> = ({ url, width, height }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<PIXI.Application | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -24,13 +23,13 @@ export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) =>
 
     const initPixi = async () => {
       try {
-        // Create a unique canvas for KTX2 viewer to get separate WebGL context
-        const ktx2Canvas = document.createElement('canvas');
-        ktx2Canvas.width = width;
-        ktx2Canvas.height = height;
+        // Create a unique canvas for Image viewer to get separate WebGL context
+        const imageCanvas = document.createElement('canvas');
+        imageCanvas.width = width;
+        imageCanvas.height = height;
 
         // Check WebGL support on the unique canvas
-        const gl = ktx2Canvas.getContext('webgl2');
+        const gl = imageCanvas.getContext('webgl2');
         if (!gl) {
           throw new Error('WebGL is not supported in your browser');
         }
@@ -42,17 +41,17 @@ export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) =>
             width,
             height,
             ...DEFAULT_RENDERER_OPTIONS,
-            view: ktx2Canvas as HTMLCanvasElement,
+            view: imageCanvas as HTMLCanvasElement,
           });
 
           // Replace the original canvas with our unique one
           if (containerRef.current) {
             // Clear the container and add our unique canvas
             containerRef.current.innerHTML = '';
-            containerRef.current.appendChild(ktx2Canvas);
+            containerRef.current.appendChild(imageCanvas);
           }
 
-          (window as any).__PIXI_APP_KTX2__ = app;
+          (window as any).__PIXI_APP_IMAGE__ = app;
 
           // Create a container for the sprite
           const container = new PIXI.Container();
@@ -63,9 +62,9 @@ export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) =>
           setGl(gl);
         }
       } catch (error) {
-        console.error('Failed to initialize KTX2 PIXI:', error);
+        console.error('Failed to initialize Image PIXI:', error);
         if (containerRef.current) {
-          containerRef.current.innerHTML = 'Failed to initialize KTX2 WebGL viewer';
+          containerRef.current.innerHTML = 'Failed to initialize Image WebGL viewer';
         }
       }
     };
@@ -116,8 +115,12 @@ export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) =>
         }
 
         // Load and display the KTX2 texture
-        const texture = await PIXI.Assets.load(url);
-        console.log('ktx2', texture, url);
+        const texture = await PIXI.Assets.load({
+          src: url,
+          format: 'png',
+          loadParser: 'loadTextures',
+        });
+        console.log('original', texture, url);
 
         // Create a new sprite with the texture
         const sprite = new PIXI.Sprite(texture);
@@ -127,13 +130,8 @@ export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) =>
         // Add sprite to the stage
         appRef.current?.stage.addChild(sprite);
         spriteRef.current = sprite;
-
-        console.log('KTX2Viewer - Texture loaded and sprite created');
       } catch (error) {
-        console.error('Failed to load KTX2 texture:', error);
-        if (containerRef.current) {
-          containerRef.current.innerHTML = `Failed to load KTX2 texture: ${error instanceof Error ? error.message : 'Unknown error'}`;
-        }
+        console.error('Failed to load texture:', error);
       }
     };
 
@@ -142,7 +140,7 @@ export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) =>
 
   return (
     <>
-      <div className="preview ktx2-viewer">
+      <div className="preview image-viewer">
         <div
           ref={containerRef}
           style={{
@@ -159,7 +157,7 @@ export const KTX2Viewer: React.FC<KTX2ViewerProps> = ({ url, width, height }) =>
         </div>
       </div>
       {/* WebGL Memory Information */}
-      <WebGLMemoryInfo gl={gl} title="KTX2 WebGL Memory Info" />
+      <WebGLMemoryInfo gl={gl} title="Image WebGL Memory Info" />
     </>
   );
 };

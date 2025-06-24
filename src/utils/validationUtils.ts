@@ -1,7 +1,13 @@
+/**
+ * Validation utility functions for file validation, compression options, and image processing
+ */
+
 import { MAX_FILE_SIZE, SUPPORTED_FORMATS } from '../constants';
 
 /**
  * Validates a file for image upload
+ * @param file - The file to validate
+ * @returns Error message string or null if valid
  */
 export const validateImageFile = (file: File): string | null => {
   if (!SUPPORTED_FORMATS.includes(file.type as (typeof SUPPORTED_FORMATS)[number])) {
@@ -15,6 +21,11 @@ export const validateImageFile = (file: File): string | null => {
 
 /**
  * Validates compression options based on mode
+ * @param value - The value to validate
+ * @param min - Minimum allowed value
+ * @param max - Maximum allowed value
+ * @param step - Optional step increment
+ * @returns True if valid, false otherwise
  */
 export const validateCompressionOptions = (
   value: number,
@@ -29,6 +40,8 @@ export const validateCompressionOptions = (
 
 /**
  * Gets image dimensions from a File object
+ * @param file - The image file to analyze
+ * @returns Promise resolving to width and height
  */
 export const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {

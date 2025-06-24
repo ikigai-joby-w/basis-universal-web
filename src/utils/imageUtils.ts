@@ -1,3 +1,23 @@
+/**
+ * Image processing utility functions for texture memory calculation and image manipulation
+ */
+
+// Define texture format constants
+const TEXTURE_FORMATS = {
+  RGBA: 6408,
+  RGB: 6407,
+  ALPHA: 6406,
+  LUMINANCE: 6409,
+  LUMINANCE_ALPHA: 6410,
+} as const;
+
+type TextureFormat = (typeof TEXTURE_FORMATS)[keyof typeof TEXTURE_FORMATS];
+
+/**
+ * Pads an image to dimensions that are multiples of 4 (required for Basis compression)
+ * @param file - The image file to pad
+ * @returns Promise resolving to padded file and new dimensions
+ */
 export const padImageToMultipleOfFour = async (
   file: File
 ): Promise<{ file: File; width: number; height: number }> => {
@@ -67,3 +87,44 @@ export const padImageToMultipleOfFour = async (
     reader.readAsDataURL(file);
   });
 };
+
+/**
+ * Calculate texture memory usage based on texture dimensions and format
+ * @param texture - The PIXI texture to analyze
+ * @returns Estimated memory usage in bytes
+ */
+export const calculateTextureMemory = (texture: any): number => {
+  if (!texture.source) return 0;
+
+  const { width, height } = texture.source;
+  const format = Number(texture.source.format) as TextureFormat;
+
+  // Estimate memory usage based on format
+  let bytesPerPixel = 4; // Default to RGBA
+  switch (format) {
+    case TEXTURE_FORMATS.RGBA:
+      bytesPerPixel = 4;
+      break;
+    case TEXTURE_FORMATS.RGB:
+      bytesPerPixel = 3;
+      break;
+    case TEXTURE_FORMATS.ALPHA:
+      bytesPerPixel = 1;
+      break;
+    case TEXTURE_FORMATS.LUMINANCE:
+      bytesPerPixel = 1;
+      break;
+    case TEXTURE_FORMATS.LUMINANCE_ALPHA:
+      bytesPerPixel = 2;
+      break;
+    // Add more format cases as needed
+  }
+
+  return width * height * bytesPerPixel;
+};
+
+/**
+ * Export texture format constants for use in components
+ */
+export { TEXTURE_FORMATS };
+export type { TextureFormat };

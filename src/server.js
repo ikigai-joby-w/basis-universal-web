@@ -82,37 +82,40 @@ async function validateImageDimensions(imagePath) {
 
 // Build basisu command based on compression options
 function buildBasisuCommand(inputFileName, options) {
-  let command = `cd "${DIRS.preview}" && "${BASISU_PATH}"`;
+  let baseCommand = `cd "${DIRS.preview}" && "${BASISU_PATH}"`;
 
   switch (options.mode) {
     case 'etc1s':
-      command += ` -q ${options.quality || '128'}`;
+      baseCommand += ` -q ${options.quality || '128'}`;
       break;
     case 'uastc':
-      command += ` -uastc`;
+      baseCommand += ` -uastc`;
       break;
     case 'uastc_rdo':
-      command += ` -uastc -uastc_rdo_l ${options.rdoQuality || '1.0'}`;
+      baseCommand += ` -uastc -uastc_rdo_l ${options.rdoQuality || '1.0'}`;
       break;
     case 'hdr_4x4':
-      command += ` -hdr`;
+      baseCommand += ` -hdr`;
       break;
     case 'hdr_6x6':
-      command += ` -hdr_6x6 -lambda ${options.lambda || '500'} -hdr_6x6_level ${options.level || '3'}`;
+      baseCommand += ` -hdr_6x6 -lambda ${options.lambda || '500'} -hdr_6x6_level ${options.level || '3'}`;
       break;
     case 'hdr_6x6i':
-      command += ` -hdr_6x6i -lambda ${options.lambda || '500'} -hdr_6x6i_level ${options.level || '3'}`;
+      baseCommand += ` -hdr_6x6i -lambda ${options.lambda || '500'} -hdr_6x6i_level ${options.level || '3'}`;
       break;
     default:
-      command += ` -q 128`;
+      baseCommand += ` -q 128`;
       break;
   }
 
   if (options.generateMipmaps === 'true') {
-    command += ' -mipmap';
+    baseCommand += ' -mipmap';
   }
 
-  return command + ` "${inputFileName}"`;
+  // Generate both .basis and .ktx2 files with correct extensions
+  const baseName = path.basename(inputFileName, path.extname(inputFileName));
+  // First generate .basis file (native format), then .ktx2 file
+  return `${baseCommand} -basis -output_file "${baseName}.basis" "${inputFileName}" && ${baseCommand} -ktx2 -output_file "${baseName}.ktx2" "${inputFileName}"`;
 }
 
 // Compress image using basisu
@@ -137,6 +140,7 @@ async function compressImage(inputPath, options) {
 
     // Execute compression command
     const command = buildBasisuCommand(inputFileName, options);
+    console.log('Executing command:', command);
     const { stdout, stderr } = await execAsync(command);
     console.log('Command output:', stdout);
     if (stderr) console.error('Command stderr:', stderr);
@@ -146,24 +150,71 @@ async function compressImage(inputPath, options) {
 
     // Find generated files
     const files = await readdirAsync(DIRS.preview);
-    const compressedFiles = files
+    console.log('Files in preview directory:', files);
+
+    // Process files and track unique types
+    const processedFiles = new Map(); // Use Map to avoid duplicates
+
+    files
       .filter(
         file => file.startsWith(baseFileName) && (file.endsWith('.basis') || file.endsWith('.ktx2'))
       )
-      .map(file => {
-        const newPath = path.join(
-          DIRS.preview,
-          `${options.name}.${path.extname(file).substring(1)}`
-        );
-        // Rename the file to match original name
-        if (file !== path.basename(newPath)) {
-          fs.renameSync(path.join(DIRS.preview, file), newPath);
+      .forEach(file => {
+        // Determine the correct file type based on the actual file content
+        let fileType = path.extname(file).substring(1);
+
+        // Verify the file type by checking the magic number
+        const filePath = path.join(DIRS.preview, file);
+        const buffer = fs.readFileSync(filePath);
+        const magic = buffer.readUInt32LE(0);
+
+        if (file.endsWith('.basis')) {
+          // Check if it's actually a KTX2 file
+          if (magic === 0x58544bab) {
+            // KTX2 magic number
+            fileType = 'ktx2';
+            console.log(
+              `Magic number: 0x${magic.toString(16)} File ${file} is actually KTX2 format, correcting type`
+            );
+          } else if (magic === 0x31734273) {
+            // Basis magic number
+            fileType = 'basis';
+            console.log(
+              `Magic number: 0x${magic.toString(16)} File ${file} is confirmed Basis format`
+            );
+          } else {
+            console.log(`Magic number: 0x${magic.toString(16)} File ${file} has unknown format`);
+          }
+        } else if (file.endsWith('.ktx2')) {
+          // Verify it's actually a KTX2 file
+          if (magic === 0x58544bab) {
+            // KTX2 magic number
+            fileType = 'ktx2';
+            console.log(
+              `Magic number: 0x${magic.toString(16)} File ${file} is confirmed KTX2 format`
+            );
+          } else {
+            console.log(`Magic number: 0x${magic.toString(16)} File ${file} is not KTX2 format`);
+          }
         }
-        return {
-          path: newPath,
-          type: path.extname(newPath).substring(1),
-        };
+
+        // Only keep one file per type, prefer the one with correct extension
+        if (!processedFiles.has(fileType) || file.endsWith(`.${fileType}`)) {
+          const newPath = path.join(DIRS.preview, `${options.name}.${fileType}`);
+          // Rename the file to match original name
+          if (file !== path.basename(newPath)) {
+            fs.renameSync(path.join(DIRS.preview, file), newPath);
+          }
+          processedFiles.set(fileType, {
+            path: newPath,
+            type: fileType,
+          });
+        }
       });
+
+    const compressedFiles = Array.from(processedFiles.values());
+
+    console.log('Compressed files found:', compressedFiles);
 
     if (compressedFiles.length === 0) {
       throw new Error('No compressed files found');
