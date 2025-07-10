@@ -59,16 +59,11 @@ export const BasisViewer: React.FC<BasisViewerProps> = ({ url, width, height }) 
               parser => 'name' in parser && parser.name === 'loadBasis'
             );
 
-            console.log('Basis loader already registered:', hasBasisLoader);
-            console.log(
-              'Available parsers:',
-              PIXI.Assets.loader.parsers.map(p => ('name' in p ? p.name : 'unnamed'))
-            );
+            console.log('hasBasisLoader', hasBasisLoader);
 
             // Only register the BASIS loader if it's not already registered
             if (!hasBasisLoader) {
               (PIXI.Assets.loader.parsers as LoaderParser[]).push(PIXI.loadBasis as LoaderParser);
-              console.log('Basis loader registered');
             }
 
             // Replace the original canvas with our unique one
@@ -148,12 +143,6 @@ export const BasisViewer: React.FC<BasisViewerProps> = ({ url, width, height }) 
           spriteRef.current.destroy({ children: true });
           spriteRef.current = null;
         }
-
-        console.log('Loading BASIS texture from URL:', url);
-        console.log(
-          'Available parsers before load:',
-          PIXI.Assets.loader.parsers.map(p => ('name' in p ? p.name : 'unnamed'))
-        );
 
         // Check if the file exists first
         try {
